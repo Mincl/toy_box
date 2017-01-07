@@ -1,0 +1,47 @@
+@(cards: List[Card])
+
+@import helper._
+@import models._
+
+
+@styles = {
+}
+
+@scripts = {
+	
+}
+
+@main("뀨라레!", styles, scripts) {
+
+	<table class="table">
+		<tr>
+			<th>코드</th>
+			<th>카드 이름</th>
+			<th>레어도</th>
+			<th>코스트</th>
+			<th>역할</th>
+			<th>속성</th>
+			<th>스킬</th>
+			<th>장르</th>
+			<th>일러스트</th>
+		</tr>
+	@for(card <- cards) {
+		<tr>
+			<td>@card.code</td>
+			<td>@card.name</td>
+			<td>@card.rarity</td>
+			<td>@card.cost</td>
+			<td>@card.position</td>
+			<td>@card.skill.Type</td>
+			<td>@card.skill.name</td>
+			<td>@card.category</td>
+			<td>@card.illustrator</td>
+		</tr>
+	}
+	</table>
+	
+<script>
+	$(function() {
+	});
+</script>
+}

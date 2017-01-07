@@ -1,0 +1,11 @@
+# Routes
+# This file defines all application routes (Higher priority routes first)
+# ~~~~
+
+# Home page
+GET     /                      			    controllers.qurareController.qurare
+GET		/deck								controllers.qurareController.deck
+GET		/card/stat/:id/:enchantCnt/:level	controllers.qurareController.getStat(id: Int, enchantCnt: Int, level: Int)
+
+# Map static resources from the /public folder to the /assets URL path
+GET     /assets/*file               controllers.Assets.at(path="/public", file)

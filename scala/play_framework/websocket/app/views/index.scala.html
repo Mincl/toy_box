@@ -1,0 +1,70 @@
+@(roomList: Map[Int, akka.actor.ActorRef])
+
+@import helper._
+
+@main("Chat room") {
+	<div>
+		<h2>Chat room</h2>
+	</div>
+	
+	<script>
+		var Socket;
+        var _chatroom;
+		$(function() {
+		});
+		function sendMessage() {
+            if(_chatroom) {
+                var json = {
+                    "profileId" : parseInt(_chatroom),
+                    "msg" : $ ( '#message' ).val ( )
+                } ;
+                Socket.send ( JSON.stringify(json) ) ;
+                $ ( '#message' ).val ( '' ) ;
+            }
+		}
+		function keyPress(evt) {
+			if(evt.keyCode == 13) {
+				sendMessage();
+			}
+		}
+		function join(chatroom) {
+			if("WebSocket" in window) {
+				Socket = new WebSocket('ws://localhost:9000/recv/'+chatroom);
+				Socket.onopen = function(evt) {
+					// connected
+                    _chatroom = chatroom;
+				};
+				Socket.onmessage = function(evt) {
+					// get message
+					$('#textLog').append('<p>'+evt.data+'</p>');
+				};
+				Socket.onclose = function(evt) {
+					// closed
+                    _chatroom = null;
+				};
+			} else {
+				alert('지원하지 않는 브라우저입니다.');
+			}
+		}
+		function create() {
+			$.ajax('/create', {
+				type: 'POST',
+				success: function(data) {
+					location.reload();
+				}
+			});
+		}
+	</script>
+	
+	<div>
+		<div id="textLog" style="width: 1000px; height:500px;">
+		</div>
+		<input type="text" id="nick" style="width:100px" value="noname" /><input type="text" id="message" name="message" style="width:500px" onkeypress="keyPress(event)">
+	</div>
+	<input type="text" id="roomname" style="width:100px" /><button onclick="create()">방 생성</button>
+	<div>
+		@for(room <- roomList) {
+			<button onclick="join('@room._1')">@room._1</button>
+		}
+	</div>
+}

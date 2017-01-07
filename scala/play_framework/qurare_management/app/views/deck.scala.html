@@ -1,0 +1,165 @@
+@(cards: List[Card])
+
+@import helper._
+@import models._
+
+@styles = {
+	
+}
+
+@scripts = {
+<script>
+	$(function() {
+        $.fn.typeahead.Constructor.prototype.blur = function() {
+            var that = this;
+            setTimeout(function () { that.hide() }, 250);
+        };
+ 
+		var cardList = [];
+		@for((card, i) <- cards.zipWithIndex) {
+			cardList.push({
+				card: '{"id": @card.id, "code": "@card.code", "name": "@card.name", "rarity": @card.rarity, "cost": @card.cost, "position": "@card.position", "category": "@card.category", "illustrator": "@card.illustrator", "description": "@card.description", "skill_name": "@card.skill.name", "skill_type": "@card.skill.Type", "skill_desc": "@card.skill.description"}',
+				card_name: '@card.name'
+			});
+		}
+
+        $('#card_search').typeahead({
+            source: cardList,
+            display: 'card_name',
+            val: 'card',
+            itemSelected: function(item, val, text) {
+            	var card = JSON.parse(val);
+            	setCardInfo(card);
+            }
+		});
+
+/*		$('#card_search').autocomplete({
+			source: cardList,
+			select: function(event, ui) {
+				// select action
+				userAppend(ui.item.label, ui.item.value);
+				$('#card_search').val('');
+				return false;
+			},
+			focus: function(event, ui) {
+				event.preventDefault();
+				$('#card_search').val(ui.item.label);
+			}
+		});*/
+    });
+
+	function setCardInfo(card) {
+		$('#card_name').html(card.name);
+		var stars = '';
+		for(var i = 0 ; i < card.rarity ; i++)
+			stars += '★';
+		$('#card_rarity').html(stars);
+		$('#card_cost').html(card.cost+'');
+		$('#card_position').html(card.position);
+		$('#card_skill').html(card.skill_name + ' : ' + card.skill_desc);
+		$('#card_category').html(card.category);
+		$('#card_illustrator').html(card.illustrator);
+		$('#card_desc').html(card.description);
+
+		$.ajax(
+			'/card/stat/'+card.id+'/2/54', {
+			dataType: "json",
+			success: function(data, status, xhr) {
+				var stat = JSON.parse(data);
+				$('#card_level').html(stat.level)
+				$('#card_atk').html(stat.atk);
+				$('#card_hp').html(stat.hp);
+				$('#card_heal').html(stat.heal);
+			}
+		});
+	}
+
+	function getEmptyCell(skill_type) {
+		if(skill_type === "액티브") {
+			for(var i = 0 ; i < 5 ; i++) {
+				if($('#active'+i).html() === '')
+					break;
+			}
+			return $('#active'+i);
+		} else {
+			for(var i = 0 ; i < 5 ; i++) {
+				if($('#passive'+i).html() === '')
+					break;
+			}
+			return $('#passive'+i);
+		}
+
+		return null;
+	}
+</script>
+}
+
+
+@main("뀨라레!", styles, scripts) {
+
+	<div class="left_container">
+		<div>
+			<label for="card_search" class="control-label">카드 검색</label>
+			<input id="card_search" type="text" class="input-medium" data-provide="typeahead">
+		</div>
+
+		<div>
+			<table class="table table-bordered" style="width:250px">
+				<tr>
+					<td id="active0" style="width:50px; height:50px"></td>
+					<td id="active1" style="width:50px; height:50px"></td>
+					<td id="active2" style="width:50px; height:50px"></td>
+					<td id="active3" style="width:50px; height:50px"></td>
+					<td id="active4" style="width:50px; height:50px"></td>
+				</tr>
+				<tr>
+					<td id="passive0" style="width:50px; height:50px"></td>
+					<td id="passive1" style="width:50px; height:50px"></td>
+					<td id="passive2" style="width:50px; height:50px"></td>
+					<td id="passive3" style="width:50px; height:50px"></td>
+					<td id="passive4" style="width:50px; height:50px"></td>
+				</tr>
+			</table>
+		</div>
+	</div>
+	<div class="right_container" style="display:inline-block">
+		<table class="table" style="width:500px">
+			<tr>
+				<th style="width:100px">카드 명</th>
+				<td id="card_name"></td>
+			</tr>
+			<tr>
+				<th style="width:100px">레어도</th>
+				<td id="card_rarity"></td>
+			</tr>
+			<tr>
+				<th style="width:100px">코스트</th>
+				<td id="card_cost"></td>
+			</tr>
+			<tr>
+				<th style="width:100px">역할</th>
+				<td id="card_position"></td>
+			</tr>
+			<tr>
+				<th style="width:100px">스킬</th>
+				<td id="card_skill"></td>
+			</tr>
+			<tr>
+				<th style="width:100px">장르</th>
+				<td id="card_category"></td>
+			</tr>
+			<tr>
+				<th style="width:100px">일러스트</th>
+				<td id="card_illustrator"></td>
+			</tr>
+			<tr>
+				<th style="width:100px">카드 설명</th>
+				<td id="card_desc"></td>
+			</tr>
+		</table>
+		<p id="card_level"></p>
+		<p id="card_atk"></p>
+		<p id="card_hp"></p>
+		<p id="card_heal"></p>
+	</div>
+}

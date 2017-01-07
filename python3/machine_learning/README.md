@@ -2,3 +2,4 @@
 
 ## Dependencies
 - tensorFlow
+- matplotlib

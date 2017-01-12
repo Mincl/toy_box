@@ -32,3 +32,15 @@
   - ![gradient_3](img/linear_regression/gradient_3.png)
   - ![gradient_4](img/linear_regression/gradient_4.png)
 
+## Multi-variable Linear Regression
+### linear regression에서 살짝 변형하면 됨
+- 2개짜리: ![hypothesis_2](img/multi_variable_linear_regression/hypothesis_2.png)
+- n개짜리: ![hypothesis_n](img/multi_variable_linear_regression/hypothesis_n.png)
+- Cost function: ![mul_cost](img/multi_variable_linear_regression/cost.png)
+
+### 수식이 너무 길어지니 matrix로 간편화
+- 기본 발상: ![matrix](img/multi_variable_linear_regression/matrix.png)
+- ![matrix_w](img/multi_variable_linear_regression/matrix_w.png)
+- ![matrix_x](img/multi_variable_linear_regression/matrix_x.png)
+- ![hypothesis_matrix](img/multi_variable_linear_regression/hypothesis_matrix.png)
+

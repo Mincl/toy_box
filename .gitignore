@@ -3,3 +3,4 @@ Unity/
 apache*/
 .DS_STORE
 granblue
+*.out

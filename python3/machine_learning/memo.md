@@ -17,17 +17,18 @@
 
 ### Cost(W, b): W, b가 주어졌을때 실제 데이터와의 오차치
 - Simplify => Cost(W)
-- ![cost](img/cost.png)
+- ![cost](img/linear_regression/cost.png)
 
 ### Convex function: 그래프를 그렸을 때, 볼록한 형태가 되는 함수
 ### Gradient Descent Algorithm: Convex function에서 minimize를 찾는 알고리즘
 - 현재값을 다음값으로 변경할때 현재값의 접선을 따라가도록 한다. (미분 이용)
 
 ### Cost(W)는 convex function이 되기 때문에, gradient descent algorithm으로 minimize를 구할 수 있다.
-- ![alpha](img/alpha.png)는 learning rate인가보다. (constant)
+- ![alpha](img/linear_regression/alpha.png)는 learning rate (constant)
 - minimize를 구하는것이 목적이므로 /2를 해도 상관이 없다.
-- ![cost_2](img/cost_2.png)
-- ![gradient_1](img/gradient_1.png)
-  - ![gradient_2](img/gradient_2.png)
-  - ![gradient_3](img/gradient_3.png)
-  - ![gradient_4](img/gradient_4.png)
+- ![cost_2](img/linear_regression/cost_2.png)
+- ![gradient_1](img/linear_regression/gradient_1.png)
+  - ![gradient_2](img/linear_regression/gradient_2.png)
+  - ![gradient_3](img/linear_regression/gradient_3.png)
+  - ![gradient_4](img/linear_regression/gradient_4.png)
+

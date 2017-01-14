@@ -64,5 +64,5 @@
 ### Gradient Descent Algorithm
 - 바뀐 cost함수를 그냥 적용
 - ![logistic_cost_2](img/logistic_classification/cost_2.png)
-- ![gradient_1](img/minear_regression/gradient_1.png)
+- ![gradient_1](img/linear_regression/gradient_1.png)
 

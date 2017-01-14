@@ -44,3 +44,25 @@
 - ![matrix_x](img/multi_variable_linear_regression/matrix_x.png)
 - ![hypothesis_matrix](img/multi_variable_linear_regression/hypothesis_matrix.png)
 
+## Logistic Classification
+### Binary Classification: A or B 형태로 분류. 각각 0(fail), 1(pass)로 encoding해서 분류한다.
+
+### 발상: linear regression으로 나온 그래프에서 반을 쪼개서 fail/pass 추측을 하면?
+- training data에서 편차가 큰 input이 있으면 pass되어야할 데이터가 fail되도록 학습되는 문제점이 발생
+- hypothesis의 결과값이 0~1범위를 많이 벗어나는 경우가 있음
+
+### Logistic Hypothesis: 기존의 hypothesis의 결과값을 0~1사이로 제한
+- logistic function(or sigmoid function): ![g](img/logistic_classification/g.png)
+- hypothesis: ![logistic_hypothesis](img/logistic_classification/hypothesis.png)
+
+### Cost Function: 새로운 hypothesis의 결과값이 linear하지 않으므로(curved) 기존 cost함수를 사용하게 된다면 minimize를 구하기가 힘들어진다.
+- 발상: using log
+- new cost function for logistic: ![logistic_cost](img/logistic_classification/cost.png)
+  - ![logistic_c](img/logistic_classification/c.png)
+  - Simplify => ![logistic_simple_c](img/logistic_classification/simple_c.png)
+
+### Gradient Descent Algorithm
+- 바뀐 cost함수를 그냥 적용
+- ![logistic_cost_2](img/logistic_classification/cost_2.png)
+- ![gradient_1](img/minear_regression/gradient_1.png)
+

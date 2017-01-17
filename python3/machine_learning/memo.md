@@ -66,3 +66,29 @@
 - ![logistic_cost_2](img/logistic_classification/cost_2.png)
 - ![gradient_1](img/linear_regression/gradient_1.png)
 
+## Softmax Regression
+### Multinomial Classification: logistic classification 을 그대로 적용 가능
+- 발상: 각각의 분류를 A or not, B or not 형식으로 분류하도록 하게 함
+- hypothesis를 분류 수 만큼 만듬
+  - ![h_a](img/softmax_regression/h_a.png)
+  - ![h_b](img/softmax_regression/h_b.png)
+  - ![h_c](img/softmax_regression/h_c.png)
+- 하나로 묶어서 간단하게 표현하자
+  - ![softmax_simple_h](img/softmax_regression/simple_h.png)
+- 하지만 이러면 각각의 결과값이 0~1 범위를 벗어나 버린다. 결과값에 softmax function을 적용해서 해결.
+
+### Softmax function: ![softmax_range](img/softmax_regression/softmax_range.png)와 ![softmax_sum](img/softmax_regression/softmax_sum.png)를 만족하는 function
+- 결과값이 확률처럼 표현이 되는데, 우리는 분류를 해야하므로 one-hot encoding을 해줌.
+- one-hot encoding: softmax function의 result 중에서 제일 높은 수치를 1.0, 나머지를 0.0으로 만듬
+
+### Cross-entropy Cost Function
+- softmax function과 one-hot encoding의 결과를 함수화해서 표현
+  - ![cross_entropy](img/softmax_regression/cross_entropy.png)
+  - ![simple_cross_entropy](img/softmax_regression/simple_cross_entropy.png)
+- 사실은 logistic cost function과 cross entropy cost function은 동일하다.
+- 최종적인 cost function의 형태: ![cross_entropy_cost](img/softmax_regression/cost.png)
+
+### Gradient Descent Algorithm
+- 언제나 그렇듯이 cost function을 미분한뒤 learning rate만큼 쫒아가도록 한다.
+- TODO: 미분 과정
+

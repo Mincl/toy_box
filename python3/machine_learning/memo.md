@@ -111,3 +111,8 @@
   - Regularization: ![regularization](img/ml_tips/regularization.png)
     - ![lambda](img/ml_tips/lambda.png) 는 regularization strength (상수)
 
+### Learning and test data sets
+- 구성: Original Set = Training Set + Validation Set + Testing Set
+  - validation은 learning rate나 regularization strength 등을 조정하며 테스트시 사용
+  - train 후 validation 통과하면 test
+

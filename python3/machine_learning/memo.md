@@ -92,3 +92,22 @@
 - 언제나 그렇듯이 cost function을 미분한뒤 learning rate만큼 쫒아가도록 한다.
 - TODO: 미분 과정
 
+## Machine Learning Tips
+### Learning Rate
+- large learning rate: overshooting
+- small learning rate: takes too long, stops at local minimum
+- observe the cost function for solve: learning rate의 시작을 0.01로 두고 cost function의 값을 관찰하며 수정해나가면 좋다
+
+### Data Preprocessing
+- gradient descent를 적용하기 위해 X 데이터를 때때로 전처리 해줘야함
+  - zero-centered data: 데이터 분포의 중심점을 zero로 맞춤
+  - normalized data: 데이터 전체 범위를 특정 범위로 normalize
+    - Standardization: ![standardization](img/ml_tips/standardization.png) (X_std[:,0] = (X[:,0] - X[:,0].mean()) / X[:,0].std())
+
+### Overfitting: 너무 training set에 맞춰버려서 training data 외의 데이터 적중률이 떨어지는 문제
+- solutions for overfitting
+  - more training data
+  - reduce the number of features
+  - Regularization: ![regularization](img/ml_tips/regularization.png)
+    - ![lambda](img/ml_tips/lambda.png) 는 regularization strength (상수)
+

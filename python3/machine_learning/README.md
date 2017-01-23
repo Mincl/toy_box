@@ -5,3 +5,5 @@ learn from [this site](https://hunkim.github.io/ml/)
 ## Dependencies
 - tensorFlow
 - matplotlib
+- scipy
+- opencv2

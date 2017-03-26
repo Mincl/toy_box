@@ -5,3 +5,4 @@ apache*/
 granblue
 *.out
 linebot
+*.pyc

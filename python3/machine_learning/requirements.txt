@@ -2,3 +2,6 @@ tensorFlow
 matplotlib
 scipy
 opencv2
+Cython
+TSNE
+sklearn

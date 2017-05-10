@@ -1,4 +1,8 @@
-OBJS = main.cpp
+
+#OBJS = tutorial.cpp
+#OBJS = example.cpp
+#OBJS = example_2.cpp
+OBJS = mouse_callback.cpp
 
 CC = g++
 
@@ -9,7 +13,7 @@ COMPILER_FLAGS = -w
 
 LINKER_FLAGS = -framework OpenGL -lglfw3 -lglew
 
-OBJ_NAME = main
+OBJ_NAME = run
 
 all : $(OBJS); $(CC) $(OBJS) $(INCLUDE_PATHS) $(LIBRARY_PATHS) $(COMPILER_FLAGS) $(LINKER_FLAGS) -o $(OBJ_NAME)
 

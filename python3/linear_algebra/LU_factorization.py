@@ -80,7 +80,8 @@ def inverse_matrix(A):
             multiple = A2[j, i] / pivot
             for k in range(0, n):
                 B[j, k] -= multiple * B[i, k]
-                A2[j, k] -= multiple * A[i, k]
+                A2[j, k] -= multiple * A2[i, k]
+    print(A2)
     # upward substitution
     for i in range(n-1, -1, -1):
         pivot = A2[i, i]
@@ -89,6 +90,7 @@ def inverse_matrix(A):
             A2[j, i] = multiple
             for k in range(0, n):
                 B[j, k] -= multiple * B[i, k]
+    print(B)
     # divide
     for i in range(0, n):
         if A2[i, i] != 1:

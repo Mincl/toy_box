@@ -1,7 +1,7 @@
 import numpy as np
 from LU_factorization import *
 
-f = open("zero_input.txt", "r")
+f = open("input.txt", "r")
 
 A_str = f.readline()
 C_str = f.readline()

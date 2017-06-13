@@ -1,0 +1,31 @@
+#version 330 core
+
+in vec3 fragmentColor;
+in vec3 fragNormal;
+in vec3 fragVert;
+
+// Output data
+out vec4 color;
+
+uniform mat4 model;
+
+uniform struct Light {
+    vec3 position;
+    vec3 intensities;
+} light;
+
+void main() {
+    // color = fragmentColor;
+
+    mat3 normalMatrix = transpose(inverse(mat3(model)));
+    vec3 normal = normalize(normalMatrix * fragNormal);
+
+    vec3 fragPosition = vec3(model * vec4(fragVert, 1));
+
+    vec3 surfaceToLight = light.position - fragPosition;
+
+    float brightness = dot(normal, surfaceToLight) / (length(surfaceToLight) * length(normal));
+    brightness = clamp(brightness, 0, 1);
+
+    color = vec4(brightness * light.intensities * fragmentColor.rgb, 1.0);
+}

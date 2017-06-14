@@ -53,12 +53,13 @@ int main() {
     // set background color
     glClearColor(0.0f, 0.0f, 0.4f, 0.0f);
 
-    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+    // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_LESS);
 
     // not use Cull Face mode
-    // glEnable(GL_CULL_FACE);
+    glEnable(GL_CULL_FACE);
+    glFrontFace(GL_CW);
 
     GLuint VertexArrayID;
     glGenVertexArrays(1, &VertexArrayID);
@@ -71,18 +72,25 @@ int main() {
     GLuint projectionID = glGetUniformLocation(programID, "projection");
     GLuint lightPositionID = glGetUniformLocation(programID, "light.position");
     GLuint lightIntensitiesID = glGetUniformLocation(programID, "light.intensities");
+    GLuint cameraPositionID = glGetUniformLocation(programID, "cameraPosition");
 
-    gLight.position = vec3(2.0f, 1.0f, 5.0f);
+    // initialize global light
+    gLight.position = vec3(0.0f, 0.0f, 100.0f);
     gLight.intensities = vec3(1.5f, 1.5f, 1.5f);
 
+    // initailize draw manager
     int meshCnt = 30;
     Manager* manager = new Manager(meshCnt);
-    
+
     float rad = 1.0f;
     int heightLevel = 10;
     vec3 ryanColor = vec3(1.0f, 187.0f/255.0f, 0.0f); // #ffbb00
     vec3 whiteColor = vec3(1.0f, 1.0f, 1.0f); // #ffffff
     vec3 blackColor = vec3(0.0f, 0.0f, 0.0f); // #000000
+    
+    // add light position for show
+    manager->addSphere(0.1f, DRAWABLE_HALFFLAG_SPHERE, whiteColor);
+    manager->translateRecent(gLight.position);
     
     // ryan body
     manager->addSphereCylinder(rad, 4.0f, heightLevel, ryanColor);
@@ -186,11 +194,13 @@ int main() {
         glm::mat4 ViewMatrix = getViewMatrix();
         glm::mat4 ModelMatrix = glm::mat4(1.0);
 
+        // bind uniform data
         glUniformMatrix4fv(modelID, 1, GL_FALSE, &ModelMatrix[0][0]);
         glUniformMatrix4fv(viewID, 1, GL_FALSE, &ViewMatrix[0][0]);
         glUniformMatrix4fv(projectionID, 1, GL_FALSE, &ProjectionMatrix[0][0]);
         glUniform3f(lightPositionID, gLight.position.x, gLight.position.y, gLight.position.z);
         glUniform3f(lightIntensitiesID, gLight.intensities.x, gLight.intensities.y, gLight.intensities.z);
+        glUniform3f(cameraPositionID, ViewMatrix[0][0], ViewMatrix[0][1], ViewMatrix[0][2]);
 
         // bind our texture in Texture Unit 0
         // glActiveTexture(GL_TEXTURE0);

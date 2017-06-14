@@ -34,6 +34,7 @@ float cameraDis = 10.0f;
 
 float speed = 3.0f; // 3 units / second
 float mouseSpeed = 0.005f;
+bool pressFlag = false;
 
 void computeMatricesFromInputs()
 {
@@ -75,18 +76,20 @@ void computeMatricesFromInputs()
 
     // Move forward
     if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS ||
-        glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+        glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS ||
+        glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
     {
         cameraDis -= deltaTime * speed * 1.5f;
     }
     // Move backward
     if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS ||
-        glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+        glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS ||
+        glfwGetKey(window, GLFW_KEY_Z) == GLFW_PRESS)
     {
         cameraDis += deltaTime * speed * 1.5f;
     }
     // button 'l'
-    if (glfwGetKey(window, GLFW_KEY_L) == GLFW_PRESS) {
+    if (glfwGetKey(window, GLFW_KEY_L) == GLFW_PRESS && pressFlag == false) {
         if(lineMode == false) {
             // show polygon by line
             glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
@@ -96,6 +99,10 @@ void computeMatricesFromInputs()
             glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
             lineMode = false;
         }
+        pressFlag = true;
+    }
+    if (glfwGetKey(window, GLFW_KEY_L) == GLFW_RELEASE && pressFlag == true) {
+        pressFlag = false;
     }
 
     float FoV = initialFoV; // - 5 * glfwGetMouseWheel(); // Now GLFW 3 requires setting up a callback for this. It's a bit too complicated for this beginner's tutorial, so it's disabled instead.
@@ -108,6 +115,7 @@ void computeMatricesFromInputs()
         vec3(0.0f, 0.0f, 0.0f), // look to zero point
         up                    // Head is up (set to 0,-1,0 to look upside-down)
         );
+    gLight.position = direction;
 
     // For the next frame, the "last time" will be "now"
     lastTime = currentTime;

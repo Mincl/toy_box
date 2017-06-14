@@ -32,7 +32,7 @@ class Drawable {
         void setSphere(float rad, int halfFlag); // halfFlag = 0: draw sphere, halfFlag = 1: draw up sphere, halfFlag = 2: draw down sphere
 
         void setColor(vec3 c);
-        void setNormal(vec3 n);
+        void setNormal();
 
         void setCenterPoint(vec3 o);
         void translate(vec3 v); // translate vector

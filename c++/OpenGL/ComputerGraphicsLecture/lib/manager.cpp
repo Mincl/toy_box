@@ -103,7 +103,7 @@ void Manager::addCircle(float rad, vec3 color) {
     Drawable* circle = new Drawable(this->meshCnt);
     circle->setCircle(rad);
     circle->setColor(color);
-    circle->setNormal(vec3(0.0f, -1.0f, 1.0f));
+    circle->setNormal();
 
     std::vector<Drawable*> group;
     group.push_back(circle);
@@ -114,7 +114,7 @@ void Manager::addCylinder(float rad, float height, int heightLevel, int circleFl
     Drawable* cylinder = new Drawable(this->meshCnt);
     cylinder->setCylinder(rad, height, heightLevel, circleFlag);
     cylinder->setColor(color);
-    cylinder->setNormal(vec3(0.0f, -1.0f, 1.0f));
+    cylinder->setNormal();
 
     std::vector<Drawable*> group;
     group.push_back(cylinder);
@@ -125,7 +125,7 @@ void Manager::addSphere(float rad, int halfFlag, vec3 color) {
     Drawable* sphere = new Drawable(this->meshCnt);
     sphere->setSphere(rad, halfFlag);
     sphere->setColor(color);
-    sphere->setNormal(vec3(0.0f, -1.0f, 1.0f));
+    sphere->setNormal();
 
     std::vector<Drawable*> group;
     group.push_back(sphere);
@@ -140,19 +140,19 @@ void Manager::addSphereCylinder(float rad, float height, int heightLevel, vec3 c
     topSphere->setColor(color);
     topSphere->translate(vec3(0.0f, halfHeight, 0.0f));
     topSphere->setCenterPoint(vec3(0.0f, 0.0f, 0.0f));
-    topSphere->setNormal(vec3(0.0f, -1.0f, 1.0f));
+    topSphere->setNormal();
 
     Drawable* bodyCylinder = new Drawable(this->meshCnt);
     bodyCylinder->setCylinder(rad, height, heightLevel, DRAWABLE_CIRCLEFLAG_NO);
     bodyCylinder->setColor(color);
-    bodyCylinder->setNormal(vec3(0.0f, -1.0f, 1.0f));
+    bodyCylinder->setNormal();
 
     Drawable* bottomSphere = new Drawable(this->meshCnt);
     bottomSphere->setSphere(rad, DRAWABLE_HALFFLAG_DOWN);
     bottomSphere->setColor(color);
     bottomSphere->translate(vec3(0.0f, halfHeight-height, 0.0f));
     bottomSphere->setCenterPoint(vec3(0.0f, 0.0f, 0.0f));
-    bottomSphere->setNormal(vec3(0.0f, -1.0f, 1.0f));
+    bottomSphere->setNormal();
 
     std::vector<Drawable*> group;
     group.push_back(topSphere);

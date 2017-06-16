@@ -24,7 +24,8 @@ class Manager {
         void setBuffer();
         void drawAll();
 
-        void addCircle(float rad, vec3 color);
+        void addCircle(float rad, vec3 color, float str, float edr);
+        void addTulip(float rad, vec3 color);
         void addCylinder(float rad, float height, int heightLevel, int circleFlag, vec3 color);
         void addSphere(float rad, int halfFlag, vec3 color);
         void addSphereCylinder(float rad, float height, int heightLevel, vec3 color);

@@ -76,7 +76,7 @@ int main() {
 
     // initialize global light
     gLight.position = vec3(0.0f, 0.0f, 100.0f);
-    gLight.intensities = vec3(1.5f, 1.5f, 1.5f);
+    gLight.intensities = vec3(1.0f, 1.0f, 1.0f);
 
     // initailize draw manager
     int meshCnt = 30;
@@ -87,14 +87,20 @@ int main() {
     vec3 ryanColor = vec3(1.0f, 187.0f/255.0f, 0.0f); // #ffbb00
     vec3 whiteColor = vec3(1.0f, 1.0f, 1.0f); // #ffffff
     vec3 blackColor = vec3(0.0f, 0.0f, 0.0f); // #000000
+
+    // ryan tulip
+    manager->addTulip(rad, whiteColor);
+    manager->scaleRecent(vec3(0.6, 0.7, 0.5));
+    manager->translateRecent(vec3(0.0f, -0.2f, 0.7f));
     
     // add light position for show
     manager->addSphere(0.1f, DRAWABLE_HALFFLAG_SPHERE, whiteColor);
     manager->translateRecent(gLight.position);
     
     // ryan body
-    manager->addSphereCylinder(rad, 4.0f, heightLevel, ryanColor);
+    manager->addSphereCylinder(rad, 5.0f, heightLevel, ryanColor);
     manager->scaleRecent(vec3(1.0f, 0.3f, 0.7f));
+    manager->translateRecent(vec3(0.0f, -0.1f, 0.0f));
 
     // ryan head
     manager->addSphere(rad, DRAWABLE_HALFFLAG_SPHERE, ryanColor);
@@ -118,13 +124,13 @@ int main() {
 
     // ryan left leg
     manager->addSphereCylinder(rad, 2.0f, heightLevel, ryanColor);
-    manager->scaleRecent(vec3(0.5f, 0.5f, 0.5f));
-    manager->translateRecent(vec3(-0.5f, -1.0f, 0.0f));
+    manager->scaleRecent(vec3(0.45f, 0.5f, 0.5f));
+    manager->translateRecent(vec3(-0.55f, -1.1f, 0.0f));
 
     // ryan right leg
     manager->addSphereCylinder(rad, 2.0f, heightLevel, ryanColor);
-    manager->scaleRecent(vec3(0.5f, 0.5f, 0.5f));
-    manager->translateRecent(vec3(0.5f, -1.0f, 0.0f));
+    manager->scaleRecent(vec3(0.45f, 0.5f, 0.5f));
+    manager->translateRecent(vec3(0.55f, -1.1f, 0.0f));
 
     // ryan left arm
     manager->addSphereCylinder(rad, 2.0f, heightLevel, ryanColor);

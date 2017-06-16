@@ -22,33 +22,66 @@ Drawable::Drawable(int meshCnt) {
 Drawable::~Drawable() {
 }
 
-std::vector<vec3> Drawable::getCirclePoints(float rad, vec3 center, int cnt) {
+std::vector<vec3> Drawable::getCirclePoints(float rad, vec3 center, int cnt, float str, float edr) {
     float delta = M_PI * 2.0 / cnt;
     std::vector<vec3> circlePoints;
     for (int i = 0; i <= cnt; i++) {
-        float circlePoint_x = rad * cos(i * delta) + center.x;
-        float circlePoint_y = center.y;
-        float circlePoint_z = rad * sin(i * delta) + center.z;
-        circlePoints.push_back(vec3(circlePoint_x, circlePoint_y, circlePoint_z));
+        if(i * delta >= str && i * delta <= edr) {
+            float circlePoint_x = rad * cos(i * delta) + center.x;
+            float circlePoint_y = center.y;
+            float circlePoint_z = rad * sin(i * delta) + center.z;
+            circlePoints.push_back(vec3(circlePoint_x, circlePoint_y, circlePoint_z));
+        }
     }
     return circlePoints;
 }
 
-void Drawable::setCircle(float rad) {
+void Drawable::setCircle(float rad, float str, float edr) {
     this->drawMode = GL_TRIANGLE_FAN;
-    this->vertexCnt = this->meshCnt + 2;
+    std::vector<vec3> circlePoints = this->getCirclePoints(rad, vec3(0.0f, 0.0f, 0.0f), this->meshCnt, str, edr);
+
+    this->vertexCnt = circlePoints.size() + 1;
     int arraySize = this->vertexCnt * 3;
 
     printf("allocate vertices size: %d\n", arraySize);
     this->vertex = new GLfloat[arraySize];
     this->vertex[0] = 0.0f; this->vertex[1] = 0.0f; this->vertex[2] = 0.0f;
-    std::vector<vec3> circlePoints = this->getCirclePoints(rad, vec3(0.0f, 0.0f, 0.0f), this->meshCnt);
     std::vector<vec3>::iterator it = circlePoints.begin();
     for (int i = 1; it != circlePoints.end(); it++, i++) {
         this->vertex[i*3] = (*it).x;
         this->vertex[i*3+1] = (*it).y;
         this->vertex[i*3+2] = (*it).z;
     }
+}
+
+void Drawable::setTulip(float rad) {
+    float r30 = M_PI * 2.0f / 12.0f;
+    float r330 = M_PI * 2.0f - r30;
+    this->drawMode = GL_TRIANGLE_FAN;
+    std::vector<vec3> circlePoints = this->getCirclePoints(rad, vec3(0.0f, 0.0f, 0.0f), this->meshCnt, r30, r330);
+
+    this->vertexCnt = circlePoints.size() + 1 + 4;
+    int arraySize = this->vertexCnt * 3;
+
+    printf("allocate vertices size: %d\n", arraySize);
+    this->vertex = new GLfloat[arraySize];
+    this->vertex[0] = 0.0f; this->vertex[1] = 0.0f; this->vertex[2] = 0.0f;
+    std::vector<vec3>::iterator it = circlePoints.begin();
+    int i;
+    float last_x = 0.0f, last_z = 0.0f;
+    for (i = 1; it != circlePoints.end(); it++, i++) {
+        if (i == 1 || it+1 == circlePoints.end()) {
+            last_x += (*it).x;
+            last_z += (*it).z;
+        }
+        this->vertex[i*3] = (*it).x;
+        this->vertex[i*3+1] = (*it).y;
+        this->vertex[i*3+2] = (*it).z;
+    }
+    this->vertex[i*3] = 0.0f; this->vertex[i*3+1] = 0.0f; this->vertex[i*3+2] = -rad; i++;
+    this->vertex[i*3] = last_x / 2.0f; this->vertex[i*3+1] = 0.0f; this->vertex[i*3+2] = last_z / 2.0f; i++;
+    this->vertex[i*3] = 0.0f; this->vertex[i*3+1] = 0.0f; this->vertex[i*3+2] = rad; i++;
+    this->vertex[i*3] = 0.0f; this->vertex[i*3+1] = 0.0f; this->vertex[i*3+2] = 0.0f; i++;
 }
 
 void Drawable::setCylinder(float rad, float height, int heightLevel, int circleFlag) {
@@ -66,7 +99,7 @@ void Drawable::setCylinder(float rad, float height, int heightLevel, int circleF
     printf("allocate vertices size: %d\n", arraySize);
     this->vertex = new GLfloat[arraySize];
     vec3 originPoint = vec3(0.0f, 0.0f, 0.0f);
-    std::vector<vec3> circlePoints = this->getCirclePoints(rad, originPoint, this->meshCnt);
+    std::vector<vec3> circlePoints = this->getCirclePoints(rad, originPoint, this->meshCnt, 0.0f, M_PI * 2.0f);
 
     int idx = 0;
     vec3 heightLevelVec = vec3(0.0f, height / heightLevel, 0.0f);
@@ -137,7 +170,7 @@ void Drawable::setSphere(float rad, int halfFlag) {
     std::vector< std::vector<vec3> > levelPoints;
     for(int i = halfIdx; i <= ySize; i++) {
         float y = rad * cos(i * y_delta);
-        std::vector<vec3> circlePoints = this->getCirclePoints(sqrt(rad*rad - y*y), vec3(0.0f, y, 0.0f), this->meshCnt);
+        std::vector<vec3> circlePoints = this->getCirclePoints(sqrt(rad*rad - y*y), vec3(0.0f, y, 0.0f), this->meshCnt, 0.0f, M_PI * 2.0f);
         levelPoints.push_back(circlePoints);
     }
 

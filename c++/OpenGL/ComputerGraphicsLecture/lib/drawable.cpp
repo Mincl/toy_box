@@ -1,6 +1,7 @@
 #include<cstdlib>
 #include<cmath>
 #include<vector>
+#include<map>
 #include<GL/glew.h>
 
 #include<glm/glm.hpp>
@@ -173,9 +174,10 @@ void Drawable::setColor(vec3 c) {
 
 void Drawable::setNormal() {
     this->normal = new vec3[this->vertexCnt];
+    std::map<float, std::map<float, std::map<float, vec3> > > normal_map;
 
     vec3 p1, p2, p3;
-    vec3 u, v, normal;
+    vec3 u, v, normal, n;
     if(this->drawMode == GL_TRIANGLES) {
         for (int i = 0; i < this->vertexCnt; i+=3) {
             p1 = this->vertex[i];
@@ -185,9 +187,14 @@ void Drawable::setNormal() {
             v = p1 - p2;
             normal = normalize(cross(u, v));
 
-            this->normal[i] = normal;
-            this->normal[i+1] = normal;
-            this->normal[i+2] = normal;
+            for (int j = 0; j < 3; j++) {
+                n = normal_map[this->vertex[i+j].x][this->vertex[i+j].y][this->vertex[i+j].z];
+                normal_map[this->vertex[i+j].x][this->vertex[i+j].y][this->vertex[i+j].z] = n + normal;
+            }
+        }
+        for (int i = 0; i < this->vertexCnt; i++) {
+            n = normal_map[this->vertex[i].x][this->vertex[i].y][this->vertex[i].z];
+            this->normal[i] = normalize(n);
         }
 
     } else if(this->drawMode == GL_TRIANGLE_FAN) {
@@ -197,7 +204,7 @@ void Drawable::setNormal() {
         u = p1 - p3;
         v = p1 - p2;
         normal = normalize(cross(u, v));
-        this->normal[0] = normal;
+        normal_map[this->vertex[0].x][this->vertex[0].y][this->vertex[0].z] = normal;
         for (int i = 1; i+2 < this->vertexCnt; i++) {
             p2 = this->vertex[i];
             p3 = this->vertex[i+1];
@@ -205,37 +212,57 @@ void Drawable::setNormal() {
             v = p1 - p2;
             normal = normalize(cross(u, v));
 
-            this->normal[i] = normal;
-            this->normal[i+1] = normal;
+            for (int j = 0; j < 2; j++) {
+                n = normal_map[this->vertex[i+j].x][this->vertex[i+j].y][this->vertex[i+j].z];
+                normal_map[this->vertex[i+j].x][this->vertex[i+j].y][this->vertex[i+j].z] = n + normal;
+            }
+        }
+        for (int i = 0; i < this->vertexCnt; i++) {
+            n = normal_map[this->vertex[i].x][this->vertex[i].y][this->vertex[i].z];
+            this->normal[i] = normalize(n);
         }
 
     } else if(this->drawMode == GL_TRIANGLE_STRIP) {
-        for (int i = 0; i+2 < this->vertexCnt; i++) {
-            p1 = this->vertex[i];
-            p2 = this->vertex[i+1];
-            p3 = this->vertex[i+2];
-            u = p1 - p3;
-            v = p1 - p2;
-            if (i % 2 == 1) {
-                u = p1 - p2;
-                v = p1 - p3;
-            }
-            normal = normalize(cross(u, v));
-
-            // if can't make face, skip calculate normal vector
-            if (p1 == p2 || p2 == p3 || p1 == p3)
-                continue;
-
-            // printf("(%.3f, %.3f, %.3f / %.3f, %.3f, %.3f / %.3f, %.3f, %.3f) - [%.3f, %.3f, %.3f]\n", \
-            //     p1.x, p1.y, p1.z, \
-            //     p2.x, p2.y, p2.z, \
-            //     p3.x, p3.y, p3.z, \
-            //     normal.x, normal.y, normal.z);
-
-            this->normal[i] = normal;
-            this->normal[i+1] = normal;
-            this->normal[i+2] = normal;
+        // using only sphere
+        for (int i = 0; i < this->vertexCnt; i++) {
+            this->normal[i] = normalize(this->vertex[i] - this->centerPoint);
         }
+
+        // for (int i = 0; i+2 < this->vertexCnt; i++) {
+        //     p1 = this->vertex[i];
+        //     p2 = this->vertex[i+1];
+        //     p3 = this->vertex[i+2];
+        //     u = p1 - p3;
+        //     v = p1 - p2;
+        //     if (i % 2 == 1) {
+        //         u = p1 - p2;
+        //         v = p1 - p3;
+        //     }
+        //     normal = normalize(cross(u, v));
+
+        //     // if can't make face, skip calculate normal vector
+        //     if (p1 == p2 || p2 == p3 || p1 == p3)
+        //         continue;
+
+        //     for (int j = 0; j < 3; j++) {
+        //         n = normal_map[this->vertex[i+j].x][this->vertex[i+j].y][this->vertex[i+j].z];
+        //         normal_map[this->vertex[i+j].x][this->vertex[i+j].y][this->vertex[i+j].z] = n + normal;
+        //     }
+        // }
+        // for (int i = 0; i < this->vertexCnt; i++) {
+        //     n = normal_map[this->vertex[i].x][this->vertex[i].y][this->vertex[i].z];
+        //     this->normal[i] = normalize(n);
+        // }
+        // printf("norm first\n");
+        // for(int l = 0; l <= 6; l++) {
+        //     printf("%.3f, %.3f, %.3f / %.3f, %.3f, %.3f\n", this->vertex[l].x, this->vertex[l].y, this->vertex[l].z, this->normal[l].x, this->normal[l].y, this->normal[l].z);
+        // }
+        // printf("\n");
+        // printf("norm last\n");
+        // for(int l = 6; l > 0; l--) {
+        //     printf("%.3f, %.3f, %.3f / %.3f, %.3f, %.3f\n", this->vertex[this->vertexCnt-l].x, this->vertex[this->vertexCnt-l].y, this->vertex[this->vertexCnt-l].z, this->normal[this->vertexCnt-l].x, this->normal[this->vertexCnt-l].y, this->normal[this->vertexCnt-l].z);
+        // }
+        // printf("\n");
     }
 }
 

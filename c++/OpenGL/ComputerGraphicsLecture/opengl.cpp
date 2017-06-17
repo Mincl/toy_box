@@ -75,8 +75,8 @@ int main() {
     GLuint cameraPositionID = glGetUniformLocation(programID, "cameraPosition");
 
     // initialize global light
-    gLight.position = vec3(0.0f, 0.0f, 100.0f);
-    gLight.intensities = vec3(1.0f, 1.0f, 1.0f);
+    gLight.position = vec3(0.0f, 5.0f, 10.0f);
+    gLight.intensities = vec3(1.5f, 1.5f, 1.5f);
 
     // initailize draw manager
     int meshCnt = 30;

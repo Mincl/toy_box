@@ -111,15 +111,23 @@ void Manager::addCircle(float rad, vec3 color, float str, float edr) {
 }
 
 void Manager::addTulip(float rad, vec3 color) {
-    Drawable* tulip = new Drawable(this->meshCnt);
-    tulip->setTulip(rad);
-    tulip->setColor(color);
-    // tulip->rotate(vec3(-M_PI / 2.0f, 0.0f, 0.0f));
-    tulip->rotate(vec3(-M_PI / 2.0f, 0.0f, -M_PI/2.0f));
-    tulip->setNormal();
+    float r30 = M_PI * 2.0f / 12.0f;
+    float r330 = M_PI * 2.0f - r30;
+    Drawable* circle = new Drawable(this->meshCnt);
+    circle->setCircle(rad, r30, r330);
+    circle->setColor(color);
+    circle->rotate(vec3(-M_PI / 2.0f, 0.0f, -M_PI/2.0f));
+    circle->setNormal();
+
+    float mid_x = (circle->vertex[(circle->vertexCnt-2)*3] + circle->vertex[3]) / 2.0f;
+    Drawable* triangle = new Drawable(1);
+    triangle->setTriangle(vec3(-rad, 0.0f, 0.0f), vec3(mid_x, circle->vertex[4], 0.0f), vec3(rad, 0.0f, 0.0f));
+    triangle->setColor(color);
+    triangle->setNormal();
 
     std::vector<Drawable*> group;
-    group.push_back(tulip);
+    group.push_back(circle);
+    group.push_back(triangle);
     this->drawList.push_back(group);
 }
 

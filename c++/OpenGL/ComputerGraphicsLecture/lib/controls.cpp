@@ -34,7 +34,8 @@ float cameraDis = 10.0f;
 
 float speed = 3.0f; // 3 units / second
 float mouseSpeed = 0.005f;
-bool pressFlag = false;
+bool followFlag = false;
+bool pressFlag[1000];
 
 void computeMatricesFromInputs()
 {
@@ -84,7 +85,7 @@ void computeMatricesFromInputs()
         cameraDis += deltaTime * speed * 1.5f;
     }
     // button 'l'
-    if (glfwGetKey(window, GLFW_KEY_L) == GLFW_PRESS && pressFlag == false) {
+    if (glfwGetKey(window, GLFW_KEY_L) == GLFW_PRESS && pressFlag['L'] == false) {
         if(lineMode == false) {
             // show polygon by line
             glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
@@ -94,10 +95,22 @@ void computeMatricesFromInputs()
             glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
             lineMode = false;
         }
-        pressFlag = true;
+        pressFlag['L'] = true;
     }
-    if (glfwGetKey(window, GLFW_KEY_L) == GLFW_RELEASE && pressFlag == true) {
-        pressFlag = false;
+    if (glfwGetKey(window, GLFW_KEY_L) == GLFW_RELEASE && pressFlag['L'] == true) {
+        pressFlag['L'] = false;
+    }
+    // button 'r'
+    if (glfwGetKey(window, GLFW_KEY_R) == GLFW_PRESS && pressFlag['R'] == false) {
+        if(followFlag == false) {
+            followFlag = true;
+        } else {
+            followFlag = false;
+        }
+        pressFlag['R'] = true;
+    }
+    if (glfwGetKey(window, GLFW_KEY_R) == GLFW_RELEASE && pressFlag['R'] == true) {
+        pressFlag['R'] = false;
     }
 
     float FoV = initialFoV; // - 5 * glfwGetMouseWheel(); // Now GLFW 3 requires setting up a callback for this. It's a bit too complicated for this beginner's tutorial, so it's disabled instead.
@@ -110,7 +123,8 @@ void computeMatricesFromInputs()
         vec3(0.0f, 0.0f, 0.0f), // look to zero point
         up                    // Head is up (set to 0,-1,0 to look upside-down)
         );
-    gLight.position = direction;
+    if(followFlag)
+        gLight.position = direction;
 
     // For the next frame, the "last time" will be "now"
     lastTime = currentTime;

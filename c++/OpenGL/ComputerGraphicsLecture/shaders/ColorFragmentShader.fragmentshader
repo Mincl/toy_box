@@ -28,7 +28,7 @@ void main() {
     //float brightness = dot(normal, surfaceToLight) / (length(surfaceToLight) * length(normal));
     //brightness = clamp(brightness, 0, 1);
     float diffuseCoefficient = max(0.0, dot(normal, surfaceToLight) / (length(surfaceToLight) * length(normal)));
-    float ambientCoefficient = 0.1;
+    float ambientCoefficient = 0.3;
     vec3 ambient = ambientCoefficient * fragmentColor.rgb * light.intensities;
     vec3 diffuse = diffuseCoefficient * fragmentColor.rgb * light.intensities;
 
@@ -43,7 +43,7 @@ void main() {
     }
     vec3 specular = specularCoefficient * fragmentColor * light.intensities;
 
-    float attenuationFactor = 0.5;
+    float attenuationFactor = 0.3;
     float powOfDistanceToLight = pow(surfaceToLight.x, 2) + pow(surfaceToLight.y, 2) + pow(surfaceToLight.z, 2);
     float attenuation = 1.0 / (1.0 + attenuationFactor * powOfDistanceToLight);
     

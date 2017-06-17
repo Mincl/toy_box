@@ -40,7 +40,7 @@ void Drawable::setCircle(float rad, float str, float edr) {
     this->drawMode = GL_TRIANGLE_FAN;
     std::vector<vec3> circlePoints = this->getCirclePoints(rad, vec3(0.0f, 0.0f, 0.0f), this->meshCnt, str, edr);
 
-    this->vertexCnt = circlePoints.size() + 1;
+    this->vertexCnt = circlePoints.size() + 1 + 1;
     int arraySize = this->vertexCnt * 3;
 
     printf("allocate vertices size: %d\n", arraySize);
@@ -52,36 +52,22 @@ void Drawable::setCircle(float rad, float str, float edr) {
         this->vertex[i*3+1] = (*it).y;
         this->vertex[i*3+2] = (*it).z;
     }
+    // degenerate triangle
+    this->vertex[arraySize-3] = 0.0f;
+    this->vertex[arraySize-2] = 0.0f;
+    this->vertex[arraySize-1] = 0.0f;
 }
 
-void Drawable::setTulip(float rad) {
-    float r30 = M_PI * 2.0f / 12.0f;
-    float r330 = M_PI * 2.0f - r30;
-    this->drawMode = GL_TRIANGLE_FAN;
-    std::vector<vec3> circlePoints = this->getCirclePoints(rad, vec3(0.0f, 0.0f, 0.0f), this->meshCnt, r30, r330);
-
-    this->vertexCnt = circlePoints.size() + 1 + 4;
+void Drawable::setTriangle(vec3 a, vec3 b, vec3 c) {
+    this->drawMode = GL_TRIANGLES;
+    this->vertexCnt = 3;
     int arraySize = this->vertexCnt * 3;
 
     printf("allocate vertices size: %d\n", arraySize);
     this->vertex = new GLfloat[arraySize];
-    this->vertex[0] = 0.0f; this->vertex[1] = 0.0f; this->vertex[2] = 0.0f;
-    std::vector<vec3>::iterator it = circlePoints.begin();
-    int i;
-    float last_x = 0.0f, last_z = 0.0f;
-    for (i = 1; it != circlePoints.end(); it++, i++) {
-        if (i == 1 || it+1 == circlePoints.end()) {
-            last_x += (*it).x;
-            last_z += (*it).z;
-        }
-        this->vertex[i*3] = (*it).x;
-        this->vertex[i*3+1] = (*it).y;
-        this->vertex[i*3+2] = (*it).z;
-    }
-    this->vertex[i*3] = 0.0f; this->vertex[i*3+1] = 0.0f; this->vertex[i*3+2] = -rad; i++;
-    this->vertex[i*3] = last_x / 2.0f; this->vertex[i*3+1] = 0.0f; this->vertex[i*3+2] = last_z / 2.0f; i++;
-    this->vertex[i*3] = 0.0f; this->vertex[i*3+1] = 0.0f; this->vertex[i*3+2] = rad; i++;
-    this->vertex[i*3] = 0.0f; this->vertex[i*3+1] = 0.0f; this->vertex[i*3+2] = 0.0f; i++;
+    this->vertex[0] = a.x; this->vertex[1] = a.y; this->vertex[2] = a.z;
+    this->vertex[3] = b.x; this->vertex[4] = b.y; this->vertex[5] = b.z;
+    this->vertex[6] = c.x; this->vertex[7] = c.y; this->vertex[8] = c.z;
 }
 
 void Drawable::setCylinder(float rad, float height, int heightLevel, int circleFlag) {
@@ -202,55 +188,91 @@ void Drawable::setColor(vec3 c) {
 
 void Drawable::setNormal() {
     this->normal = new GLfloat[this->vertexCnt * 3];
-    for (int i = 0; i < this->vertexCnt; i++) {
-        this->normal[i*3] = 0.0f;
-        this->normal[i*3+1] = 0.0f;
-        this->normal[i*3+2] = 1.0f;
-    }
+    // for (int i = 0; i < this->vertexCnt; i++) {
+    //     this->normal[i*3] = 0.0f;
+    //     this->normal[i*3+1] = 0.0f;
+    //     this->normal[i*3+2] = 1.0f;
+    // }
 
     // this->normal = new GLfloat[this->vertexCnt / 3];
-    // vec3 p1, p2, p3;
-    // vec3 u, v, normal;
-    // if(this->drawMode == GL_TRIANGLES) {
-    //     for (int i = 0; i < this->vertexCnt / 3; i++) {
-    //         p1 = vec3(this->vertex[i*9], this->vertex[i*9+1], this->vertex[i*9+2]);
-    //         p2 = vec3(this->vertex[i*9+3], this->vertex[i*9+4], this->vertex[i*9+5]);
-    //         p3 = vec3(this->vertex[i*9+6], this->vertex[i*9+7], this->vertex[i*9+8]);
-    //         u = p1 - p2;
-    //         v = p1 - p3;
-    //         normal = cross(u, v);
+    vec3 p1, p2, p3;
+    vec3 u, v, normal;
+    if(this->drawMode == GL_TRIANGLES) {
+        for (int i = 0; i < this->vertexCnt / 3; i++) {
+            p1 = vec3(this->vertex[i*9], this->vertex[i*9+1], this->vertex[i*9+2]);
+            p2 = vec3(this->vertex[i*9+3], this->vertex[i*9+4], this->vertex[i*9+5]);
+            p3 = vec3(this->vertex[i*9+6], this->vertex[i*9+7], this->vertex[i*9+8]);
+            u = p1 - p3;
+            v = p1 - p2;
+            normal = normalize(cross(u, v));
 
-    //         this->normal[i*3] = normal.x;
-    //         this->normal[i*3+1] = normal.y;
-    //         this->normal[i*3+2] = normal.z;
-    //     }
-    // } else if(this->drawMode == GL_TRIANGLE_FAN) {
-    //     p1 = vec3(this->vertex[0], this->vertex[1], this->vertex[2]);
-    //     for (int i = 1; i+1 < this->vertexCnt; i++) {
-    //         p2 = vec3(this->vertex[i*3], this->vertex[i*3+1], this->vertex[i*3+2]);
-    //         p3 = vec3(this->vertex[i*3+3], this->vertex[i*3+4], this->vertex[i*3+5]);
-    //         u = p1 - p2;
-    //         v = p1 - p3;
-    //         normal = cross(u, v);
+            this->normal[i*9] = normal.x; this->normal[i*9+1] = normal.y; this->normal[i*9+2] = normal.z;
+            this->normal[i*9+3] = normal.x; this->normal[i*9+4] = normal.y; this->normal[i*9+5] = normal.z;
+            this->normal[i*9+6] = normal.x; this->normal[i*9+7] = normal.y; this->normal[i*9+8] = normal.z;
+        }
 
-    //         this->normal[i*3] = normal.x;
-    //         this->normal[i*3+1] = normal.y;
-    //         this->normal[i*3+2] = normal.z;
-    //     }
-    // } else if(this->drawMode == GL_TRIANGLE_STRIP) {
-    //     for (int i = 0; i+2 < this->vertexCnt; i++) {
-    //         p1 = vec3(this->vertex[i*9], this->vertex[i*9+1], this->vertex[i*9+2]);
-    //         p2 = vec3(this->vertex[i*9+3], this->vertex[i*9+4], this->vertex[i*9+5]);
-    //         p3 = vec3(this->vertex[i*9+6], this->vertex[i*9+7], this->vertex[i*9+8]);
-    //         u = p1 - p2;
-    //         v = p1 - p3;
-    //         normal = cross(u, v);
+    } else if(this->drawMode == GL_TRIANGLE_FAN) {
+        p1 = vec3(this->vertex[0], this->vertex[1], this->vertex[2]);
+        p2 = vec3(this->vertex[3], this->vertex[4], this->vertex[5]);
+        p3 = vec3(this->vertex[6], this->vertex[7], this->vertex[8]);
+        u = p1 - p3;
+        v = p1 - p2;
+        normal = normalize(cross(u, v));
+        this->normal[0] = normal.x;
+        this->normal[1] = normal.y;
+        this->normal[2] = normal.z;
+        for (int i = 1; i+2 < this->vertexCnt; i++) {
+            p2 = vec3(this->vertex[i*3], this->vertex[i*3+1], this->vertex[i*3+2]);
+            p3 = vec3(this->vertex[i*3+3], this->vertex[i*3+4], this->vertex[i*3+5]);
+            u = p1 - p3;
+            v = p1 - p2;
+            normal = normalize(cross(u, v));
 
-    //         this->normal[i*3] = normal.x;
-    //         this->normal[i*3+1] = normal.y;
-    //         this->normal[i*3+2] = normal.z;
-    //     }
-    // }
+            this->normal[i*3] = normal.x;
+            this->normal[i*3+1] = normal.y;
+            this->normal[i*3+2] = normal.z;
+
+            this->normal[i*3+3] = normal.x;
+            this->normal[i*3+4] = normal.y;
+            this->normal[i*3+5] = normal.z;
+        }
+
+    } else if(this->drawMode == GL_TRIANGLE_STRIP) {
+        for (int i = 0; i+2 < this->vertexCnt; i++) {
+            p1 = vec3(this->vertex[i*3], this->vertex[i*3+1], this->vertex[i*3+2]);
+            p2 = vec3(this->vertex[i*3+3], this->vertex[i*3+4], this->vertex[i*3+5]);
+            p3 = vec3(this->vertex[i*3+6], this->vertex[i*3+7], this->vertex[i*3+8]);
+            u = p1 - p3;
+            v = p1 - p2;
+            if (i % 2 == 1) {
+                u = p1 - p2;
+                v = p1 - p3;
+            }
+            normal = normalize(cross(u, v));
+
+            // if can't make face, skip calculate normal vector
+            if (p1 == p2 || p2 == p3 || p1 == p3)
+                continue;
+
+            // printf("(%.3f, %.3f, %.3f / %.3f, %.3f, %.3f / %.3f, %.3f, %.3f) - [%.3f, %.3f, %.3f]\n", \
+            //     p1.x, p1.y, p1.z, \
+            //     p2.x, p2.y, p2.z, \
+            //     p3.x, p3.y, p3.z, \
+            //     normal.x, normal.y, normal.z);
+
+            this->normal[i*3] = normal.x;
+            this->normal[i*3+1] = normal.y;
+            this->normal[i*3+2] = normal.z;
+
+            this->normal[i*3+3] = normal.x;
+            this->normal[i*3+4] = normal.y;
+            this->normal[i*3+5] = normal.z;
+
+            this->normal[i*3+6] = normal.x;
+            this->normal[i*3+7] = normal.y;
+            this->normal[i*3+8] = normal.z;
+        }
+    }
 }
 
 void Drawable::setCenterPoint(vec3 o) {

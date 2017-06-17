@@ -30,19 +30,19 @@ void Manager::setBuffer() {
             GLuint vertexbuffer;
             glGenBuffers(1, &vertexbuffer);
             glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
-            glBufferData(GL_ARRAY_BUFFER, (*dit)->vertexCnt * 3 * sizeof(GLfloat), (*dit)->vertex, GL_STATIC_DRAW);
+            glBufferData(GL_ARRAY_BUFFER, (*dit)->vertexCnt * sizeof(vec3), (*dit)->vertex, GL_STATIC_DRAW);
             this->vertexBuffers.push_back(vertexbuffer);
 
             GLuint colorbuffer;
             glGenBuffers(1, &colorbuffer);
             glBindBuffer(GL_ARRAY_BUFFER, colorbuffer);
-            glBufferData(GL_ARRAY_BUFFER, (*dit)->vertexCnt * 3 * sizeof(GLfloat), (*dit)->color, GL_STATIC_DRAW);
+            glBufferData(GL_ARRAY_BUFFER, (*dit)->vertexCnt * sizeof(vec3), (*dit)->color, GL_STATIC_DRAW);
             this->colorBuffers.push_back(colorbuffer);
 
             GLuint normalbuffer;
             glGenBuffers(1, &normalbuffer);
             glBindBuffer(GL_ARRAY_BUFFER, normalbuffer);
-            glBufferData(GL_ARRAY_BUFFER, (*dit)->vertexCnt * 3 * sizeof(GLfloat), (*dit)->normal, GL_STATIC_DRAW);
+            glBufferData(GL_ARRAY_BUFFER, (*dit)->vertexCnt * sizeof(vec3), (*dit)->normal, GL_STATIC_DRAW);
             this->normalBuffers.push_back(normalbuffer);
         }
     }
@@ -89,7 +89,7 @@ void Manager::drawAll() {
                 (void *)0);
 
             // draw
-            glDrawArrays((*dIt)->drawMode, 0, (*dIt)->vertexCnt * 3);
+            glDrawArrays((*dIt)->drawMode, 0, (*dIt)->vertexCnt);
 
             // disable vertex array
             glDisableVertexAttribArray(0);
@@ -119,9 +119,9 @@ void Manager::addTulip(float rad, vec3 color) {
     circle->rotate(vec3(-M_PI / 2.0f, 0.0f, -M_PI/2.0f));
     circle->setNormal();
 
-    float mid_x = (circle->vertex[(circle->vertexCnt-2)*3] + circle->vertex[3]) / 2.0f;
+    float mid_x = (circle->vertex[circle->vertexCnt-2].x + circle->vertex[0].x) / 2.0f;
     Drawable* triangle = new Drawable(1);
-    triangle->setTriangle(vec3(-rad, 0.0f, 0.0f), vec3(mid_x, circle->vertex[4], 0.0f), vec3(rad, 0.0f, 0.0f));
+    triangle->setTriangle(vec3(-rad, 0.0f, 0.0f), vec3(mid_x, circle->vertex[1].y, 0.0f), vec3(rad, 0.0f, 0.0f));
     triangle->setColor(color);
     triangle->setNormal();
 

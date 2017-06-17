@@ -18,9 +18,9 @@ class Drawable {
         int meshCnt;
         int vertexCnt;
         GLenum drawMode;
-        GLfloat* vertex;
-        GLfloat* color;
-        GLfloat* normal;
+        vec3* vertex;
+        vec3* color;
+        vec3* normal;
         vec3 centerPoint;
         
     public:

@@ -41,33 +41,24 @@ void Drawable::setCircle(float rad, float str, float edr) {
     std::vector<vec3> circlePoints = this->getCirclePoints(rad, vec3(0.0f, 0.0f, 0.0f), this->meshCnt, str, edr);
 
     this->vertexCnt = circlePoints.size() + 1 + 1;
-    int arraySize = this->vertexCnt * 3;
-
-    printf("allocate vertices size: %d\n", arraySize);
-    this->vertex = new GLfloat[arraySize];
-    this->vertex[0] = 0.0f; this->vertex[1] = 0.0f; this->vertex[2] = 0.0f;
+    this->vertex = new vec3[this->vertexCnt];
+    this->vertex[0].x = 0.0f; this->vertex[0].y = 0.0f; this->vertex[0].z = 0.0f;
     std::vector<vec3>::iterator it = circlePoints.begin();
     for (int i = 1; it != circlePoints.end(); it++, i++) {
-        this->vertex[i*3] = (*it).x;
-        this->vertex[i*3+1] = (*it).y;
-        this->vertex[i*3+2] = (*it).z;
+        this->vertex[i] = (*it);
     }
     // degenerate triangle
-    this->vertex[arraySize-3] = 0.0f;
-    this->vertex[arraySize-2] = 0.0f;
-    this->vertex[arraySize-1] = 0.0f;
+    this->vertex[this->vertexCnt-1] = vec3(0.0f, 0.0f, 0.0f);
 }
 
 void Drawable::setTriangle(vec3 a, vec3 b, vec3 c) {
     this->drawMode = GL_TRIANGLES;
     this->vertexCnt = 3;
-    int arraySize = this->vertexCnt * 3;
 
-    printf("allocate vertices size: %d\n", arraySize);
-    this->vertex = new GLfloat[arraySize];
-    this->vertex[0] = a.x; this->vertex[1] = a.y; this->vertex[2] = a.z;
-    this->vertex[3] = b.x; this->vertex[4] = b.y; this->vertex[5] = b.z;
-    this->vertex[6] = c.x; this->vertex[7] = c.y; this->vertex[8] = c.z;
+    this->vertex = new vec3[this->vertexCnt];
+    this->vertex[0] = a;
+    this->vertex[1] = b;
+    this->vertex[2] = c;
 }
 
 void Drawable::setCylinder(float rad, float height, int heightLevel, int circleFlag) {
@@ -80,10 +71,8 @@ void Drawable::setCylinder(float rad, float height, int heightLevel, int circleF
         circleMeshCnt = 0;
     }
     this->vertexCnt = this->meshCnt * (circleMeshCnt + heightLevel*2) * 3;
-    int arraySize = this->vertexCnt * 3;
 
-    printf("allocate vertices size: %d\n", arraySize);
-    this->vertex = new GLfloat[arraySize];
+    this->vertex = new vec3[this->vertexCnt];
     vec3 originPoint = vec3(0.0f, 0.0f, 0.0f);
     std::vector<vec3> circlePoints = this->getCirclePoints(rad, originPoint, this->meshCnt, 0.0f, M_PI * 2.0f);
 
@@ -96,17 +85,17 @@ void Drawable::setCylinder(float rad, float height, int heightLevel, int circleF
     for(it++; it != circlePoints.end(); it++, prevIt++) {
         if (circleFlag == DRAWABLE_CIRCLEFLAG_CIRCLE) {
             // top circle vertex
-            this->vertex[idx*3] = originPoint.x; this->vertex[idx*3+1] = originPoint.y; this->vertex[idx*3+2] = originPoint.z; idx++;
-            this->vertex[idx*3] = (*prevIt).x; this->vertex[idx*3+1] = (*prevIt).y; this->vertex[idx*3+2] = (*prevIt).z; idx++;
-            this->vertex[idx*3] = (*it).x; this->vertex[idx*3+1] = (*it).y; this->vertex[idx*3+2] = (*it).z; idx++;
+            this->vertex[idx] = originPoint; idx++;
+            this->vertex[idx] = (*prevIt); idx++;
+            this->vertex[idx] = (*it); idx++;
 
             vec3 bottomVertex = (*it) - heightVec;
             vec3 bottomPrevVertex = (*prevIt) - heightVec;
 
             // bottom circle vertex
-            this->vertex[idx*3] = bottomOriginPoint.x; this->vertex[idx*3+1] = bottomOriginPoint.y; this->vertex[idx*3+2] = bottomOriginPoint.z; idx++;
-            this->vertex[idx*3] = bottomVertex.x; this->vertex[idx*3+1] = bottomVertex.y; this->vertex[idx*3+2] = bottomVertex.z; idx++;
-            this->vertex[idx*3] = bottomPrevVertex.x; this->vertex[idx*3+1] = bottomPrevVertex.y; this->vertex[idx*3+2] = bottomPrevVertex.z; idx++;
+            this->vertex[idx] = bottomOriginPoint; idx++;
+            this->vertex[idx] = bottomVertex; idx++;
+            this->vertex[idx] = bottomPrevVertex; idx++;
         }
 
         for(int j = 0; j < heightLevel; j++) {
@@ -118,14 +107,14 @@ void Drawable::setCylinder(float rad, float height, int heightLevel, int circleF
             vec3 bottomPrevVertex = (*prevIt) - jNextVec * heightLevelVec;
 
             // side upper wall vertex
-            this->vertex[idx*3] = topPrevVertex.x; this->vertex[idx*3+1] = topPrevVertex.y; this->vertex[idx*3+2] = topPrevVertex.z; idx++;
-            this->vertex[idx*3] = bottomVertex.x; this->vertex[idx*3+1] = bottomVertex.y; this->vertex[idx*3+2] = bottomVertex.z; idx++;
-            this->vertex[idx*3] = topVertex.x; this->vertex[idx*3+1] = topVertex.y; this->vertex[idx*3+2] = topVertex.z; idx++;
+            this->vertex[idx] = topPrevVertex; idx++;
+            this->vertex[idx] = bottomVertex; idx++;
+            this->vertex[idx] = topVertex; idx++;
 
             // side lower wall vertex
-            this->vertex[idx*3] = topPrevVertex.x; this->vertex[idx*3+1] = topPrevVertex.y; this->vertex[idx*3+2] = topPrevVertex.z; idx++;
-            this->vertex[idx*3] = bottomPrevVertex.x; this->vertex[idx*3+1] = bottomPrevVertex.y; this->vertex[idx*3+2] = bottomPrevVertex.z; idx++;
-            this->vertex[idx*3] = bottomVertex.x; this->vertex[idx*3+1] = bottomVertex.y; this->vertex[idx*3+2] = bottomVertex.z; idx++;
+            this->vertex[idx] = topPrevVertex; idx++;
+            this->vertex[idx] = bottomPrevVertex; idx++;
+            this->vertex[idx] = bottomVertex; idx++;
         }
     }
     this->translate(heightVec / 2.0f);
@@ -149,10 +138,8 @@ void Drawable::setSphere(float rad, int halfFlag) {
     }
 
     this->vertexCnt = (this->meshCnt + 1) * (ySize-halfIdx) * 2 + 1;
-    int arraySize = this->vertexCnt * 3;
 
-    printf("allocate vertices size: %d\n", arraySize);
-    this->vertex = new GLfloat[arraySize];
+    this->vertex = new vec3[this->vertexCnt];
     std::vector< std::vector<vec3> > levelPoints;
     for(int i = halfIdx; i <= ySize; i++) {
         float y = rad * cos(i * y_delta);
@@ -169,79 +156,64 @@ void Drawable::setSphere(float rad, int halfFlag) {
         for(prev_point_it = (*prev_it).begin(), point_it = (*it).begin();
             point_it != (*it).end();
             prev_point_it++, point_it++) {
-                this->vertex[j*3] = (*prev_point_it).x; this->vertex[j*3+1] = (*prev_point_it).y; this->vertex[j*3+2] = (*prev_point_it).z; j++;
-                this->vertex[j*3] = (*point_it).x; this->vertex[j*3+1] = (*point_it).y; this->vertex[j*3+2] = (*point_it).z; j++;
+                this->vertex[j] = (*prev_point_it); j++;
+                this->vertex[j] = (*point_it); j++;
         }
     }
     // degenerate triangle
-    this->vertex[j*3] = this->vertex[(j-1)*3]; this->vertex[j*3+1] = this->vertex[(j-1)*3+1]; this->vertex[j*3+2] = this->vertex[(j-1)*3+2]; j++;
+    this->vertex[j] = this->vertex[j-1];
 }
 
 void Drawable::setColor(vec3 c) {
-    this->color = new GLfloat[this->vertexCnt * 3];
+    this->color = new vec3[this->vertexCnt];
     for (int i = 0; i < this->vertexCnt; i++) {
-        this->color[i*3] = c.r;
-        this->color[i*3+1] = c.g;
-        this->color[i*3+2] = c.b;
+        this->color[i] = c;
     }
 }
 
 void Drawable::setNormal() {
-    this->normal = new GLfloat[this->vertexCnt * 3];
-    // for (int i = 0; i < this->vertexCnt; i++) {
-    //     this->normal[i*3] = 0.0f;
-    //     this->normal[i*3+1] = 0.0f;
-    //     this->normal[i*3+2] = 1.0f;
-    // }
+    this->normal = new vec3[this->vertexCnt];
 
-    // this->normal = new GLfloat[this->vertexCnt / 3];
     vec3 p1, p2, p3;
     vec3 u, v, normal;
     if(this->drawMode == GL_TRIANGLES) {
-        for (int i = 0; i < this->vertexCnt / 3; i++) {
-            p1 = vec3(this->vertex[i*9], this->vertex[i*9+1], this->vertex[i*9+2]);
-            p2 = vec3(this->vertex[i*9+3], this->vertex[i*9+4], this->vertex[i*9+5]);
-            p3 = vec3(this->vertex[i*9+6], this->vertex[i*9+7], this->vertex[i*9+8]);
+        for (int i = 0; i < this->vertexCnt; i+=3) {
+            p1 = this->vertex[i];
+            p2 = this->vertex[i+1];
+            p3 = this->vertex[i+2];
             u = p1 - p3;
             v = p1 - p2;
             normal = normalize(cross(u, v));
 
-            this->normal[i*9] = normal.x; this->normal[i*9+1] = normal.y; this->normal[i*9+2] = normal.z;
-            this->normal[i*9+3] = normal.x; this->normal[i*9+4] = normal.y; this->normal[i*9+5] = normal.z;
-            this->normal[i*9+6] = normal.x; this->normal[i*9+7] = normal.y; this->normal[i*9+8] = normal.z;
+            this->normal[i] = normal;
+            this->normal[i+1] = normal;
+            this->normal[i+2] = normal;
         }
 
     } else if(this->drawMode == GL_TRIANGLE_FAN) {
-        p1 = vec3(this->vertex[0], this->vertex[1], this->vertex[2]);
-        p2 = vec3(this->vertex[3], this->vertex[4], this->vertex[5]);
-        p3 = vec3(this->vertex[6], this->vertex[7], this->vertex[8]);
+        p1 = this->vertex[0];
+        p2 = this->vertex[1];
+        p3 = this->vertex[2];
         u = p1 - p3;
         v = p1 - p2;
         normal = normalize(cross(u, v));
-        this->normal[0] = normal.x;
-        this->normal[1] = normal.y;
-        this->normal[2] = normal.z;
+        this->normal[0] = normal;
         for (int i = 1; i+2 < this->vertexCnt; i++) {
-            p2 = vec3(this->vertex[i*3], this->vertex[i*3+1], this->vertex[i*3+2]);
-            p3 = vec3(this->vertex[i*3+3], this->vertex[i*3+4], this->vertex[i*3+5]);
+            p2 = this->vertex[i];
+            p3 = this->vertex[i+1];
             u = p1 - p3;
             v = p1 - p2;
             normal = normalize(cross(u, v));
 
-            this->normal[i*3] = normal.x;
-            this->normal[i*3+1] = normal.y;
-            this->normal[i*3+2] = normal.z;
-
-            this->normal[i*3+3] = normal.x;
-            this->normal[i*3+4] = normal.y;
-            this->normal[i*3+5] = normal.z;
+            this->normal[i] = normal;
+            this->normal[i+1] = normal;
         }
 
     } else if(this->drawMode == GL_TRIANGLE_STRIP) {
         for (int i = 0; i+2 < this->vertexCnt; i++) {
-            p1 = vec3(this->vertex[i*3], this->vertex[i*3+1], this->vertex[i*3+2]);
-            p2 = vec3(this->vertex[i*3+3], this->vertex[i*3+4], this->vertex[i*3+5]);
-            p3 = vec3(this->vertex[i*3+6], this->vertex[i*3+7], this->vertex[i*3+8]);
+            p1 = this->vertex[i];
+            p2 = this->vertex[i+1];
+            p3 = this->vertex[i+2];
             u = p1 - p3;
             v = p1 - p2;
             if (i % 2 == 1) {
@@ -260,17 +232,9 @@ void Drawable::setNormal() {
             //     p3.x, p3.y, p3.z, \
             //     normal.x, normal.y, normal.z);
 
-            this->normal[i*3] = normal.x;
-            this->normal[i*3+1] = normal.y;
-            this->normal[i*3+2] = normal.z;
-
-            this->normal[i*3+3] = normal.x;
-            this->normal[i*3+4] = normal.y;
-            this->normal[i*3+5] = normal.z;
-
-            this->normal[i*3+6] = normal.x;
-            this->normal[i*3+7] = normal.y;
-            this->normal[i*3+8] = normal.z;
+            this->normal[i] = normal;
+            this->normal[i+1] = normal;
+            this->normal[i+2] = normal;
         }
     }
 }
@@ -281,18 +245,14 @@ void Drawable::setCenterPoint(vec3 o) {
 
 void Drawable::translate(vec3 v) {
     for (int i = 0; i < this->vertexCnt; i++) {
-        this->vertex[i*3] = this->vertex[i*3] + v.x;
-        this->vertex[i*3+1] = this->vertex[i*3+1] + v.y;
-        this->vertex[i*3+2] = this->vertex[i*3+2] + v.z;
+        this->vertex[i] = this->vertex[i] + v;
     }
     this->centerPoint = this->centerPoint + v;
 }
 
 void Drawable::scale(vec3 factor) {
     for (int i = 0; i < this->vertexCnt; i++) {
-        this->vertex[i*3] = this->centerPoint.x + (this->vertex[i*3] - this->centerPoint.x) * factor.x;
-        this->vertex[i*3+1] = this->centerPoint.y + (this->vertex[i*3+1] - this->centerPoint.y) * factor.y;
-        this->vertex[i*3+2] = this->centerPoint.z + (this->vertex[i*3+2] - this->centerPoint.z) * factor.z;
+        this->vertex[i] = this->centerPoint + (this->vertex[i] - this->centerPoint) * factor;
     }
 }
 
@@ -309,10 +269,6 @@ void Drawable::rotate(vec3 rad) {
 
     mat3 r = rz * ry * rx;
     for (int i = 0; i < this->vertexCnt; i++) {
-        vec3 v = vec3(this->vertex[i*3], this->vertex[i*3+1], this->vertex[i*3+2]);
-        vec3 result = this->centerPoint + r * v;
-        this->vertex[i*3] = result.x;
-        this->vertex[i*3+1] = result.y;
-        this->vertex[i*3+2] = result.z;
+        this->vertex[i] = this->centerPoint + r * this->vertex[i];
     }
 }

@@ -53,7 +53,6 @@ int main() {
     // set background color
     glClearColor(0.0f, 0.0f, 0.4f, 0.0f);
 
-    glShadeModel(GL_SMOOTH);
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_LESS);
 

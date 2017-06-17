@@ -1,6 +1,6 @@
 #version 330 core
 
-in vec3 fragmentColor;
+smooth in vec3 fragmentColor;
 in vec3 fragNormal;
 in vec3 fragVert;
 

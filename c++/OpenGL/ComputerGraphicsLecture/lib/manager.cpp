@@ -119,7 +119,7 @@ void Manager::addTulip(float rad, vec3 color) {
     circle->rotate(vec3(-M_PI / 2.0f, 0.0f, -M_PI/2.0f));
     circle->setNormal();
 
-    float mid_x = (circle->vertex[circle->vertexCnt-2].x + circle->vertex[0].x) / 2.0f;
+    float mid_x = (circle->vertex[circle->vertexCnt-1].x + circle->vertex[0].x) / 2.0f;
     Drawable* triangle = new Drawable(1);
     triangle->setTriangle(vec3(-rad, 0.0f, 0.0f), vec3(mid_x, circle->vertex[1].y, 0.0f), vec3(rad, 0.0f, 0.0f));
     triangle->setColor(color);

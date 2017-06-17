@@ -4,6 +4,8 @@
 struct Light {
     vec3 position;
     vec3 intensities;
+    float ambientCoefficient;
+    float attenuationFactor;
 };
 
 #endif

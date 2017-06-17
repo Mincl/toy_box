@@ -17,6 +17,7 @@ extern Light gLight;
 bool lineMode = false;
 glm::mat4 ViewMatrix;
 glm::mat4 ProjectionMatrix;
+vec3 direction;
 
 glm::mat4 getViewMatrix()
 {
@@ -25,6 +26,10 @@ glm::mat4 getViewMatrix()
 glm::mat4 getProjectionMatrix()
 {
     return ProjectionMatrix;
+}
+vec3 getCameraPos()
+{
+    return direction;
 }
 
 float horizontalAngle = 0.0f;
@@ -54,7 +59,7 @@ void computeMatricesFromInputs()
     verticalAngle += mouseSpeed * float(768/2 - ypos);
 
     // Direction : Spherical coordinates to Cartesian coordinates conversion
-    glm::vec3 direction(
+    direction = vec3(
         cos(verticalAngle) * sin(horizontalAngle),
         sin(verticalAngle),
         cos(verticalAngle) * cos(horizontalAngle));

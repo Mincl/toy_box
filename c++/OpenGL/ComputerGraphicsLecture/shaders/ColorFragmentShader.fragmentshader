@@ -13,6 +13,8 @@ uniform vec3 cameraPosition;
 uniform struct Light {
     vec3 position;
     vec3 intensities;
+    float ambientCoefficient;
+    float attenuationFactor;
 } light;
 
 void main() {
@@ -28,29 +30,27 @@ void main() {
     //float brightness = dot(normal, surfaceToLight) / (length(surfaceToLight) * length(normal));
     //brightness = clamp(brightness, 0, 1);
     float diffuseCoefficient = max(0.0, dot(normal, surfaceToLight) / (length(surfaceToLight) * length(normal)));
-    float ambientCoefficient = 0.3;
-    vec3 ambient = ambientCoefficient * fragmentColor.rgb * light.intensities;
+    vec3 ambient = light.ambientCoefficient * fragmentColor.rgb * light.intensities;
     vec3 diffuse = diffuseCoefficient * fragmentColor.rgb * light.intensities;
 
     vec3 incidenceVector = -surfaceToLight;
     vec3 reflectionVector = reflect(incidenceVector, normal);
     vec3 surfaceToCamera = normalize(cameraPosition - fragPosition);
     float cosAngle = max(0.0, dot(surfaceToCamera, reflectionVector));
-    float materialShininess = 1.5;
+    float materialShininess = 0.2;
     float specularCoefficient = 0.0;
     if(diffuseCoefficient > 0.0) {
         specularCoefficient = pow(cosAngle, materialShininess);
     }
     vec3 specular = specularCoefficient * fragmentColor * light.intensities;
 
-    float attenuationFactor = 0.3;
     float powOfDistanceToLight = pow(surfaceToLight.x, 2) + pow(surfaceToLight.y, 2) + pow(surfaceToLight.z, 2);
-    float attenuation = 1.0 / (1.0 + attenuationFactor * powOfDistanceToLight);
+    float attenuation = 1.0 / (1.0 + light.attenuationFactor * powOfDistanceToLight);
     
     vec3 linearColor = ambient + attenuation*(diffuse, specular);
 
-    vec3 gamma = vec3(1.4/2.2);
-    //color = pow(linearColor, gamma);
+    vec3 gamma = vec3(1.0/2.2);
+    color = pow(linearColor, gamma);
     
-    color = diffuse;
+    //color = ambient + diffuse;
 }
